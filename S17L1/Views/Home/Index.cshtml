@@ -6,14 +6,16 @@
 
 @if (Model.Books != null && Model.Books.Any())
 {
-	<div>
+	<div class="row">
 		@foreach (var book in Model.Books)
 		{
-			<div>
-				<img src=@book.URL_Image style="width: 20em" />
-				<p>@book.Title</p>
-				<p class="text-muted">@book.Author</p>
-				<p>@book.Genre</p>
+			<div class="card col-3">
+				<img src=@book.URL_Image class="card-img-top">
+				<div class="card-body">
+					<h5 class="card-title">@book.Title</h5>
+					<p class="card-text">@book.Author</p>
+					<p class="card-text">@book.Genre</p>
+				</div>
 			</div>
 		}
 	</div>
