@@ -14,6 +14,18 @@ namespace S17L1.Services
             _context = context;
         }
 
+        public async Task<bool> SaveAsync()
+        {
+            try
+            { 
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch 
+            { 
+                return false;
+            }
+        }
+
         public async Task<BooksListViewModel> GetAllBooks()
         {
             try
@@ -28,6 +40,67 @@ namespace S17L1.Services
             {
                 return new BooksListViewModel() { Books = new List<Book>() };
             }
+        }
+
+        public async Task<Book> GetBookDetailsAsync(Guid id)
+        {
+            var book = await _context.Books.FindAsync(id);
+
+            if (book == null) 
+            { 
+                return null;
+            }
+
+            return book;
+        }
+
+        public async Task<bool> AddBookAsync(AddBookViewModel addBookViewModel)
+        {
+            var book = new Book()
+            {
+                Id = Guid.NewGuid(),
+                Title = addBookViewModel.Title,
+                Author = addBookViewModel.Author,
+                Genre = addBookViewModel.Genre,
+                IsAvailable = addBookViewModel.IsAvailable,
+                URL_Image = addBookViewModel.URL_Image
+            };
+
+            _context.Books.Add(book);
+
+            return await SaveAsync();
+        }
+
+        public async Task<bool> DeleteBookAsync(Guid id)
+        {
+            var book = _context.Books.Find(id);
+
+            if (book == null)
+            {
+                return false;
+            }
+
+            _context.Books.Remove(book);
+
+            return await SaveAsync();
+        }
+
+        public async Task<bool> UpdateBookAsync(EditBookViewModel editBookViewModel)
+        {
+            var book = await _context.Books.FindAsync(editBookViewModel.Id);
+
+            if (book == null)
+            {
+                return false;
+            }
+
+            book.Title = editBookViewModel.Title;
+            book.Author = editBookViewModel.Author;
+            book.Genre = editBookViewModel.Genre;
+            book.IsAvailable = editBookViewModel.IsAvailable;
+            book.URL_Image = editBookViewModel.URL_Image;
+
+            return await SaveAsync();
         }
     }
 }

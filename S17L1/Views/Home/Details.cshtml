@@ -1,0 +1,26 @@
+﻿@model DetailsViewModel;
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<a asp-controller="Home" asp-action="Index"><-back</a>
+
+<div class="d-flex container justify-content-evenly">
+	<img src=@Model.URL_Image style="width: 30em; height: 45em" />
+	<div>
+		<h1>@Model.Title</h1>
+		<h2>@Model.Author</h2>
+		<p>@Model.Genre</p>
+		@if(Model.IsAvailable == true)
+		{
+			<p class="text-success">The book is available</p>
+		}
+		else
+		{
+			<p class="text-danger">The book is not available</p>
+		}
+		<a class="btn btn-sm btn-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+		<a class="btn btn-sm btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+	</div>
+</div>
