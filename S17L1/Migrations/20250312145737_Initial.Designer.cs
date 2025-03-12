@@ -12,7 +12,7 @@ using S17L1.Data;
 namespace S17L1.Migrations
 {
     [DbContext(typeof(BooksDbContext))]
-    [Migration("20250310144154_Initial")]
+    [Migration("20250312145737_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -36,10 +36,8 @@ namespace S17L1.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("Genre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("IdGenre")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -54,7 +52,42 @@ namespace S17L1.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdGenre");
+
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("S17L1.Models.Genre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("S17L1.Models.Book", b =>
+                {
+                    b.HasOne("S17L1.Models.Genre", "Genre")
+                        .WithMany("Books")
+                        .HasForeignKey("IdGenre")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+                });
+
+            modelBuilder.Entity("S17L1.Models.Genre", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

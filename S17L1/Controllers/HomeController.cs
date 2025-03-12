@@ -35,28 +35,29 @@ namespace S17L1.Controllers
                 Id = book.Id,
                 Title = book.Title,
                 Author = book.Author,
-                Genre = book.Genre,
+                IdGenre = book.IdGenre,
                 IsAvailable = book.IsAvailable,
-                URL_Image = book.URL_Image
+                URL_Image = book.URL_Image,
+                Genre = book.Genre,
             };
 
             return View(bookViewModel);
         }
 
-        public ActionResult Add()
+        public async Task<IActionResult> Add()
         {
-            return View();
+
+            AddBookViewModel addBookViewModel = new AddBookViewModel()
+            {
+                Genres = await _homeService.GetAllGenres()
+            };
+
+            return View(addBookViewModel);
         }
 
         [HttpPost]
         public async Task<IActionResult> Add(AddBookViewModel addBookViewModel)
         {
-            if (!ModelState.IsValid) 
-            {
-                TempData["Error"] = "Error while saving entity to database";
-                return RedirectToAction("Add");
-            }
-
             var result = await _homeService.AddBookAsync(addBookViewModel);
 
             if (!result) 
@@ -84,8 +85,9 @@ namespace S17L1.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var book = await _homeService.GetBookDetailsAsync(id);
+            var genres = await _homeService.GetAllGenres();
 
-            if(book == null)
+            if (book == null)
             {
                 return RedirectToAction("Index");
             }
@@ -95,9 +97,10 @@ namespace S17L1.Controllers
                 Id = book.Id,
                 Title = book.Title,
                 Author = book.Author,
-                Genre = book.Genre,
+                IdGenre = book.IdGenre,
                 IsAvailable = book.IsAvailable,
                 URL_Image = book.URL_Image,
+                Genres = genres
             };
 
             return View(editBook);

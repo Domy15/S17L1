@@ -15,7 +15,7 @@
 				<div class="card-body">
 					<h5 class="card-title">@book.Title</h5>
 					<p class="card-text">@book.Author</p>
-					<p class="card-text">@book.Genre</p>
+					<p class="card-text">@book.Genre.Name</p>
 					<a class="btn btn-primary" asp-controller="Home" asp-action="Details" asp-route-id=@book.Id>Details</a>
 				</div>
 			</div>

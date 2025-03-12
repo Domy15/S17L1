@@ -15,7 +15,13 @@
     </div>
     <div class="mb-3">
         <label for="genre" class="form-label">Genre</label>
-        <input id="genre" type="text" class="form-control" asp-for="Genre" />
+        <select id="genre" class="form-select" asp-for="IdGenre">
+            <option value="">Select a genre</option>
+            @foreach (var genre in Model.Genres)
+            {
+                <option value=@genre.Id>@genre.Name</option>
+            }
+        </select>
     </div>
     <div class="mb-3">
         <label for="isAvailable" class="form-label">IsAvailable</label>

@@ -26,13 +26,25 @@ namespace S17L1.Services
             }
         }
 
+        public async Task<List<Genre>> GetAllGenres()
+        {
+            try
+            {
+                return await _context.Genres.ToListAsync();
+            }
+            catch
+            {
+                return new List<Genre>();
+            }
+        }
+
         public async Task<BooksListViewModel> GetAllBooks()
         {
             try
             {
                 var BooksList = new BooksListViewModel();
 
-                BooksList.Books = await _context.Books.ToListAsync();
+                BooksList.Books = await _context.Books.Include(b => b.Genre).ToListAsync();
 
                 return BooksList;
             }
@@ -44,7 +56,7 @@ namespace S17L1.Services
 
         public async Task<Book> GetBookDetailsAsync(Guid id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books.Include(b => b.Genre).Where(b => b.Id == id).SingleAsync();
 
             if (book == null) 
             { 
@@ -61,7 +73,7 @@ namespace S17L1.Services
                 Id = Guid.NewGuid(),
                 Title = addBookViewModel.Title,
                 Author = addBookViewModel.Author,
-                Genre = addBookViewModel.Genre,
+                IdGenre = addBookViewModel.IdGenre,
                 IsAvailable = addBookViewModel.IsAvailable,
                 URL_Image = addBookViewModel.URL_Image
             };
@@ -96,7 +108,7 @@ namespace S17L1.Services
 
             book.Title = editBookViewModel.Title;
             book.Author = editBookViewModel.Author;
-            book.Genre = editBookViewModel.Genre;
+            book.IdGenre = editBookViewModel.IdGenre;
             book.IsAvailable = editBookViewModel.IsAvailable;
             book.URL_Image = editBookViewModel.URL_Image;
 
