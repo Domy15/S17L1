@@ -14,6 +14,8 @@ namespace S17L1.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>().HasOne(b => b.Genre).WithMany(g => g.Books).HasForeignKey(b => b.IdGenre).OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Borrow>().Property(b => b.BorrowDate).HasDefaultValueSql("GETDATE()");
         }
     }
 }

@@ -26,5 +26,7 @@ namespace S17L1.Models
 
         [ForeignKey("IdGenre")]
         public Genre Genre { get; set; }
+
+        public Borrow Borrow { get; set; }
     }
 }
