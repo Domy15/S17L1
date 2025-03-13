@@ -1,0 +1,23 @@
+﻿@model BorrowListViewModel
+
+@{
+	ViewData["Title"] = "Borrows";
+}
+
+@if (Model.Borrows.Count > 0)
+{
+	<div class="row">
+	@foreach (var borrow in Model.Borrows)
+	{
+		<div class="col-3">
+			<p class="p-0 m-0">User Name:</p>
+			<p class="p-0">@borrow.Name</p>
+			<p class="p-0 m-0">User Surname:</p>
+			<p class="p-0">@borrow.Surname</p>
+			<p class="p-0 m-0">Book:</p>
+			<p class="p-0">@borrow.Title</p>
+			<img src=@borrow.URL_Image style="width: 5em" />
+		</div>
+	}
+	</div>
+}

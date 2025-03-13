@@ -127,5 +127,46 @@ namespace S17L1.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public IActionResult BorrowForm(Guid id)
+        {
+            var borrow = new BorrowFormViewModel()
+            {
+                IdBook = id
+            };
+
+            return View(borrow);
+        }
+
+        public async Task<IActionResult> AddBorrow(BorrowFormViewModel borrowFormViewModel)
+        {
+            if(!ModelState.IsValid)
+            {
+                TempData["Error"] = "Error while updating entity on database";
+                return RedirectToAction("BorrowForm");
+            }
+
+            var result = await _homeService.AddBorrowAsync(borrowFormViewModel);
+
+            if(!result)
+            {
+                TempData["Error"] = "Error while updating entity on database";
+                return RedirectToAction("BorrowForm");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Borrows()
+        {
+            var Borrows = await _homeService.GetAllBorrowsAsync();
+
+            var borrowsList = new BorrowListViewModel()
+            {
+                Borrows = Borrows
+            };
+
+            return View(borrowsList);
+        }
     }
 }

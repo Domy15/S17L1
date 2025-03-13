@@ -1,0 +1,29 @@
+﻿@model BorrowFormViewModel;
+
+@{
+	ViewData["Title"] = "Borrow Book";
+}
+
+<form method="post" asp-controller="Home" asp-action="AddBorrow">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input id="name" type="text" class="form-control" asp-for="Name" />
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Surname</label>
+        <input id="surname" type="text" class="form-control" asp-for="Surname" />
+        <span class="text-danger" asp-validation-for="Surname"></span>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" type="text" class="form-control" asp-for="Email" />
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label for="dateEnd" class="form-label">End Date Borrow</label>
+        <input id="dateEnd" type="date" class="form-control" asp-for="BorrowEndDate" />
+    </div>
+    <input type="hidden" value=@Model.IdBook asp-for="IdBook" />
+    <button class="btn btn-success" type="submit">Borrow</button>
+</form>

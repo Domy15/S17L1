@@ -22,5 +22,9 @@
 		}
 		<a class="btn btn-sm btn-warning" asp-controller="Home" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
 		<a class="btn btn-sm btn-danger" asp-controller="Home" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+		@if (Model.IsAvailable == true)
+		{
+			<a class="btn btn-sm btn-success" asp-controller="Home" asp-action="BorrowForm" asp-route-id="@Model.Id">Borrow book</a>
+		}
 	</div>
 </div>

@@ -11,6 +11,10 @@ namespace S17L1.Data
 
         public DbSet<Genre> Genres { get; set; }
 
+        public DbSet<Borrow> Borrows { get; set; }
+
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>().HasOne(b => b.Genre).WithMany(g => g.Books).HasForeignKey(b => b.IdGenre).OnDelete(DeleteBehavior.Cascade);

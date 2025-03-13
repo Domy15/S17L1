@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using S17L1.Controllers;
 using S17L1.Data;
 using S17L1.Models;
 using S17L1.ViewModels;
@@ -68,16 +69,21 @@ namespace S17L1.Services
 
         public async Task<bool> AddBookAsync(AddBookViewModel addBookViewModel)
         {
-            var fileName = addBookViewModel.URL_Image.FileName;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", fileName);
+            string webPath = null;
 
-            await using (var stream = new FileStream(path, FileMode.Create))
+            if (addBookViewModel.URL_Image != null)
             {
-                await addBookViewModel.URL_Image.CopyToAsync(stream);
+                var fileName = addBookViewModel.URL_Image.FileName;
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", fileName);
+
+                await using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await addBookViewModel.URL_Image.CopyToAsync(stream);
+                }
+
+                webPath = "/uploads/images/" + fileName;
             }
-
-            var webPath = "/uploads/images/" + fileName;
-
+            
             var book = new Book()
             {
                 Id = Guid.NewGuid(),
@@ -144,6 +150,73 @@ namespace S17L1.Services
             book.IsAvailable = editBookViewModel.IsAvailable;
 
             return await SaveAsync();
+        }
+
+        public async Task<bool> AddBorrowAsync(BorrowFormViewModel borrowFormViewModel)
+        {
+            var book = await _context.Books.Where(b => b.Id == borrowFormViewModel.IdBook).FirstOrDefaultAsync();
+
+            if (book == null) 
+            { 
+                return false;
+            }
+
+            var user = await _context.Users.Where(u => u.Email == borrowFormViewModel.Email).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                user = new User()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = borrowFormViewModel.Name,
+                    Surname = borrowFormViewModel.Surname,
+                    Email = borrowFormViewModel.Email,
+                };
+
+                _context.Users.Add(user);
+            }
+
+            var borrow = new Borrow()
+            {
+                Id = user.Id,
+                IdBook = borrowFormViewModel.IdBook,
+                BorrowEndDate = borrowFormViewModel.BorrowEndDate,
+                IsReturned = false
+            };
+
+            _context.Borrows.Add(borrow);
+
+            book.IsAvailable = false;
+
+            return await SaveAsync();
+        }
+
+        public async Task<List<BorrowsViewModel>> GetAllBorrowsAsync()
+        {
+            var borrows = await _context.Borrows.Include(b => b.User).Include(b => b.book).ToListAsync();
+
+            if (!borrows.Any())
+            {
+                return new List<BorrowsViewModel>();
+            }
+            
+            var borrowsList = new List<BorrowsViewModel>();
+
+            foreach(var b in borrows)
+            {
+                var borrow = new BorrowsViewModel()
+                {
+                    IdBook = b.IdBook,
+                    IdUser = b.Id,
+                    Name = b.User.Name,
+                    Surname = b.User.Surname,
+                    Title = b.book.Title,
+                    URL_Image = b.book.URL_Image
+                };
+                borrowsList.Add(borrow);
+            }
+
+            return borrowsList;
         }
     }
 }
