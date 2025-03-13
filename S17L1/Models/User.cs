@@ -13,7 +13,7 @@ namespace S17L1.Models
         public string Surname { get; set; }
 
         [Required]
-        public string IdCode { get; set; }
+        public string Email { get; set; }
 
         public ICollection<Borrow> Borrows { get; set; }
     }

@@ -9,7 +9,7 @@ namespace S17L1.ViewModels
         public string Author { get; set; }
         public int IdGenre { get; set; }
         public bool IsAvailable { get; set; }
-        public string? URL_Image { get; set; }
+        public IFormFile? URL_Image { get; set; }
         public List<Genre> Genres { get; set; }
     }
 }

@@ -68,6 +68,16 @@ namespace S17L1.Services
 
         public async Task<bool> AddBookAsync(AddBookViewModel addBookViewModel)
         {
+            var fileName = addBookViewModel.URL_Image.FileName;
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", fileName);
+
+            await using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await addBookViewModel.URL_Image.CopyToAsync(stream);
+            }
+
+            var webPath = "/uploads/images/" + fileName;
+
             var book = new Book()
             {
                 Id = Guid.NewGuid(),
@@ -75,7 +85,7 @@ namespace S17L1.Services
                 Author = addBookViewModel.Author,
                 IdGenre = addBookViewModel.IdGenre,
                 IsAvailable = addBookViewModel.IsAvailable,
-                URL_Image = addBookViewModel.URL_Image
+                URL_Image = webPath
             };
 
             _context.Books.Add(book);
@@ -106,11 +116,32 @@ namespace S17L1.Services
                 return false;
             }
 
+            if (editBookViewModel.New_URL_Image != null)
+            {
+                if (!string.IsNullOrEmpty(book.URL_Image))
+                {
+                    var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", book.URL_Image.TrimStart('/'));
+                    if (File.Exists(oldImagePath))
+                    {
+                        File.Delete(oldImagePath);
+                    }
+                }
+
+                var fileName = editBookViewModel.New_URL_Image.FileName;
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", fileName);
+
+                await using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await editBookViewModel.New_URL_Image.CopyToAsync(stream);
+                }
+
+                book.URL_Image = "/uploads/images/" + fileName;
+            }
+
             book.Title = editBookViewModel.Title;
             book.Author = editBookViewModel.Author;
             book.IdGenre = editBookViewModel.IdGenre;
             book.IsAvailable = editBookViewModel.IsAvailable;
-            book.URL_Image = editBookViewModel.URL_Image;
 
             return await SaveAsync();
         }
