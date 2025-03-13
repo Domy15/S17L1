@@ -58,6 +58,14 @@ namespace S17L1.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(AddBookViewModel addBookViewModel)
         {
+            ModelState.Remove("Genres");
+
+            if (!ModelState.IsValid) 
+            {
+                TempData["Error"] = "Error while saving entity to database";
+                return RedirectToAction("Add");
+            }
+
             var result = await _homeService.AddBookAsync(addBookViewModel);
 
             if (!result) 
